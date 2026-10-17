@@ -1,0 +1,127 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bank Friend</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f7f4fc;color:#241637;font-family:Arial,sans-serif}
+header{background:linear-gradient(135deg,#210644,#742cff);color:white;padding:25px 20px 30px;border-radius:0 0 25px 25px}
+.logo{font-size:23px;font-weight:bold}
+small{color:#e4d6ff}
+.saldo{background:#ffffff20;padding:18px;border-radius:18px;margin-top:22px}
+#valor{font-size:32px;font-weight:bold;margin:12px 0}
+main{max-width:480px;margin:auto;padding:18px 15px 85px}
+h2{font-size:19px}
+.acoes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+button{cursor:pointer;font:inherit}
+.acoes button{border:0;background:white;border-radius:15px;padding:14px 3px;font-size:12px;color:#5420a8}
+.acoes b{display:block;font-size:23px;margin-bottom:8px}
+.card{background:white;border-radius:17px;padding:17px;margin-top:18px}
+.pagina{display:none}
+.pagina.ativa{display:block}
+input{width:100%;padding:13px;border:1px solid #ddd0ee;border-radius:11px;margin:8px 0 14px}
+.primario{width:100%;border:0;background:#742cff;color:white;padding:14px;border-radius:12px;font-weight:bold}
+.voltar{border:0;background:none;color:#742cff;padding:10px 0}
+.item{padding:12px 0;border-bottom:1px solid #eee}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:12px 0}
+nav button{border:0;background:white;color:#742cff;font-size:12px}
+.aviso{font-size:12px;color:#766d83;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">🟣 Bank Friend</div>
+ <p>Olá, bem-vindo(a) 👋</p>
+ <div class="saldo">
+  <small>Saldo demonstrativo</small>
+  <div id="valor">R$ 0,00</div>
+  <button onclick="ocultar()" id="olho">Ocultar saldo</button>
+  <p><small>Protótipo — sem dinheiro real</small></p>
+ </div>
+</header>
+<main>
+<section id="inicio" class="pagina ativa">
+ <h2>Acesso rápido</h2>
+ <div class="acoes">
+  <button onclick="abrir('transferir')"><b>↗</b>Transferir</button>
+  <button onclick="abrir('adicionar')"><b>＋</b>Adicionar</button>
+  <button onclick="abrir('extrato')"><b>▤</b>Extrato</button>
+  <button onclick="abrir('credito')"><b>◇</b>Crédito</button>
+ </div>
+ <div class="card">
+  <h2>Últimas movimentações</h2>
+  <div id="recentes" class="aviso">Nenhuma movimentação ainda.</div>
+ </div>
+ <div class="card aviso">🔒 Segurança em primeiro lugar. Esta demonstração não se conecta a bancos.</div>
+</section>
+<section id="transferir" class="pagina">
+ <button class="voltar" onclick="abrir('inicio')">← Voltar</button>
+ <h2>Transferir</h2>
+ <label>Destinatário</label>
+ <input id="destino" placeholder="Nome para a simulação">
+ <label>Valor (R$)</label>
+ <input id="vtransferir" type="number" min="0.01" placeholder="0,00">
+ <button class="primario" onclick="transferir()">Simular transferência</button>
+ <p id="msg1" class="aviso"></p>
+</section>
+<section id="adicionar" class="pagina">
+ <button class="voltar" onclick="abrir('inicio')">← Voltar</button>
+ <h2>Adicionar saldo de teste</h2>
+ <input id="vadicionar" type="number" min="0.01" placeholder="Valor em reais">
+ <button class="primario" onclick="adicionar()">Adicionar valor de teste</button>
+ <p id="msg2" class="aviso"></p>
+</section>
+<section id="extrato" class="pagina">
+ <button class="voltar" onclick="abrir('inicio')">← Voltar</button>
+ <h2>Extrato demonstrativo</h2>
+ <div id="lista" class="card aviso">Nenhuma movimentação.</div>
+</section>
+<section id="credito" class="pagina">
+ <button class="voltar" onclick="abrir('inicio')">← Voltar</button>
+ <div class="card"><h2>Área de crédito</h2><p>Em breve</p><p class="aviso">Esta versão não oferece empréstimos reais.</p></div>
+</section>
+<section id="perfil" class="pagina">
+ <button class="voltar" onclick="abrir('inicio')">← Voltar</button>
+ <div class="card"><h2>Perfil</h2><p>Bank Friend · Versão 0.1</p><p>Configurações</p><p>Segurança e privacidade</p></div>
+</section>
+<p class="aviso">Demonstração visual. Os valores e as transferências são apenas testes locais. Não representam dinheiro real.</p>
+</main>
+<nav>
+ <button onclick="abrir('inicio')">⌂ Início</button>
+ <button onclick="abrir('transferir')">↗ Transferir</button>
+ <button onclick="abrir('extrato')">▤ Extrato</button>
+ <button onclick="abrir('perfil')">○ Perfil</button>
+</nav>
+<script>
+let saldo=0,visivel=true,historico=[];
+function dinheiro(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function atualizar(){
+ document.getElementById('valor').textContent=visivel?dinheiro(saldo):'••••••';
+ let html=historico.map(t=>'<div class="item">'+t.nome+'<br><small>'+dinheiro(t.valor)+'</small></div>').join('');
+ document.getElementById('recentes').innerHTML=html||'Nenhuma movimentação ainda.';
+ document.getElementById('lista').innerHTML=html||'Nenhuma movimentação.';
+}
+function ocultar(){visivel=!visivel;document.getElementById('olho').textContent=visivel?'Ocultar saldo':'Mostrar saldo';atualizar()}
+function abrir(id){document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('ativa'));document.getElementById(id).classList.add('ativa');window.scrollTo(0,0)}
+function adicionar(){
+ let v=Number(document.getElementById('vadicionar').value);
+ if(v<=0||!Number.isFinite(v)){document.getElementById('msg2').textContent='Digite um valor válido.';return}
+ saldo+=v;historico.unshift({nome:'Valor de teste adicionado',valor:v});atualizar();
+ document.getElementById('msg2').textContent='Teste concluído. Nenhum dinheiro real foi depositado.';
+ document.getElementById('vadicionar').value='';
+}
+function transferir(){
+ let d=document.getElementById('destino').value.trim(),v=Number(document.getElementById('vtransferir').value);
+ if(!d||v<=0||!Number.isFinite(v)){document.getElementById('msg1').textContent='Preencha o destinatário e um valor válido.';return}
+ if(v>saldo){document.getElementById('msg1').textContent='Saldo de teste insuficiente.';return}
+ saldo-=v;historico.unshift({nome:'Transferência simulada para '+d,valor:-v});atualizar();
+ document.getElementById('msg1').textContent='Simulação concluída. Nenhum dinheiro foi enviado.';
+ document.getElementById('vtransferir').value='';
+}
+atualizar();
+</script>
+</body>
+</html>
